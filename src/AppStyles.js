@@ -15,9 +15,9 @@ const theme = createMuiTheme({
     },
   });
   
-const cards = [{key:1, title:"Definition game", image:"/definitions.jpg", description:"Can you guess a word by its definition ?"},
-   {key:2, title:"Voice game", image:"/talkingwoman.jpg", description:"Can you guess a word by the way it sounds ?"},
-   {key:3, title:"Synonyms game",image:"/puzzle.jpg", description:"Can you find a synonym to a given word ?"}];
+const cards = [{key:1, title:"Definition game", image:require("./images/definitions.jpg"), description:"Can you guess a word by its definition ?", link:"/definitionsGame"},
+   {key:2, title:"Voice game", image:require("./images/talkingwoman.jpg"), description:"Can you guess a word by the way it sounds ?", link:"/audioGame"},
+   {key:3, title:"Synonyms game",image:require("./images/puzzle.jpg"), description:"Can you find a synonym to a given word ?", link:"/synonymsGame"}];
   
 const useStyles = makeStyles((theme) => ({
     icon: {

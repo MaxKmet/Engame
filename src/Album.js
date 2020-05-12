@@ -8,7 +8,7 @@ export default function Album({classes, cards}) {
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
             {cards.map((card) => (
-            <GameCard key = {card.key} classes ={classes} gameCard={card}/>              
+            <GameCard key = {card.key} classes ={classes} gameCard={card}/>           
             ))}
           </Grid>
         </Container>
