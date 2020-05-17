@@ -14,11 +14,38 @@ export default class DefinitionsGameFrame extends React.Component  {
 
     this.state = {
       definition: "A long definition of a difficult term in English",
-      words: [["Word1", false],["Word2", true], ["Word3", false], ["Word4", false]],
+      words: [{word:"Word1",correct:false, color:"primary"},{word:"Word2",correct:true, color:"primary"}, 
+      {word:"Word3",correct:false, color:"primary"}, {word:"Word4",correct:false, color:"primary"}],      
       classes: classes,
       points: 10,
     };
     
+  }
+
+  checkSelection(e, predictedWord){
+    e.preventDefault();
+    let addPoints = 0;
+    let correctWord = this.state.words.find((word) => word.correct).word;
+    if(predictedWord == correctWord){
+      addPoints =10;
+    }
+
+    this.setState((state) => ({
+      words: state.words.map((word) => ({word: word.word, correct: word.correct, color: word.correct ? "secondary": "primary"})),
+      points: state.points + addPoints
+    }))
+
+  }
+
+  resetField(e){
+    e.preventDefault();
+    
+    this.setState((state) => ({
+      words: [{word:"New1",correct:false, color:"primary"},{word:"New2",correct:true, color:"primary"}, 
+      {word:"New3",correct:false, color:"primary"}, {word:"New4",correct:false, color:"primary"}],
+    }))
+   
+
   }
   
   render(){
@@ -42,8 +69,10 @@ export default class DefinitionsGameFrame extends React.Component  {
       <div className={this.state.classes.section2}>
         <div>
         {this.state.words.map((wordItem) => (
-          <Chip key={wordItem[0]} className={this.state.classes.chip} label= {wordItem[0]} />          
+          <Chip onClick ={(e) => this.checkSelection(e, wordItem.word)} key={wordItem.word} color={wordItem.color} className={this.state.classes.chip} label= {wordItem.word} />          
         ))} 
+        <Chip onClick ={(e) => this.resetField(e)} color="primary" className={this.state.classes.chip} label= "NEXT" />
+
         </div>
       </div>
       <div className={this.state.classes.section3}>
