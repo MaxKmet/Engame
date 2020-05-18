@@ -38,6 +38,31 @@ export default class DefinitionsGameFrame extends React.Component  {
 
   }
 
+  updateEverything(e){
+    e.preventDefault();
+    let names = ['iliakan', 'remy', 'jeresig', "hello"];
+
+    let requests = names.map(_ => fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
+      "method": "GET",
+      "headers": {
+        "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
+        "x-rapidapi-key": "e35230f3b8msh39f53e53d676724p1619c3jsn99097ecfe42a"
+      }
+    }));
+
+     Promise.all(requests)
+       .then(responses => {        
+     
+         return responses;
+       })
+       
+       .then(responses => Promise.all(responses.map(r => r.json())))
+       .then(results => {this.setState((state) => ({
+        words: results.map((res) => ({word: res.word, correct: false, color:"primary"})),
+      }))});
+
+      }
+
   resetWords(){
     for(let i = 0; i < this.state.numOptions; i++){
       fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
@@ -137,7 +162,7 @@ export default class DefinitionsGameFrame extends React.Component  {
         {this.state.words.map((wordItem) => (
           <Chip onClick ={(e) => this.checkSelection(e, wordItem.word)} key={wordItem.word} color={wordItem.color} className={this.state.classes.chip} label= {wordItem.word} />          
         ))} 
-        <Chip onClick ={(e) => this.resetField(e)} color="primary" className={this.state.classes.chip} label= "NEXT" />
+        <Chip onClick ={(e) => this.updateEverything(e)} color="primary" className={this.state.classes.chip} label= "NEXT" />
 
         </div>
       </div>
