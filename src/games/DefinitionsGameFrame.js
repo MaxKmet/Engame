@@ -38,9 +38,9 @@ export default class DefinitionsGameFrame extends React.Component {
 
   }
 
-  getRequestsForDefinition(words){
-    words = words.map( word => word.replace(" ","_"));
-    let requests_definition = words.map( name => fetch("https://wordsapiv1.p.rapidapi.com/words/"+ name +"/definitions", {
+  getRequestsForDefinition(words) {
+    words = words.map(word => word.replace(" ", "_"));
+    let requests_definition = words.map(name => fetch("https://wordsapiv1.p.rapidapi.com/words/" + name + "/definitions", {
       "method": "GET",
       "headers": {
         "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
@@ -58,20 +58,22 @@ export default class DefinitionsGameFrame extends React.Component {
     var correctWord = ""
     var words_definitions = []
     this.setState((state) => ({
-      definition: ""      
+      definition: ""
     }))
 
-    var updatedSuccessfully = false;
 
+    let requests = [];
+
+    for(let i=0; i < this.state.numOptions; i++){
+      requests.push(fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
+        "method": "GET",
+        "headers": {
+          "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
+          "x-rapidapi-key": "e35230f3b8msh39f53e53d676724p1619c3jsn99097ecfe42a"
+        }
+      }))
+    }
     
-    let names = ['iliakan', 'remy', 'jeresig', "hello"];
-    let requests = names.map(_ => fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
-      "method": "GET",
-      "headers": {
-        "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
-        "x-rapidapi-key": "e35230f3b8msh39f53e53d676724p1619c3jsn99097ecfe42a"
-      }
-    }));
 
     var random_words = [];
 
@@ -82,139 +84,54 @@ export default class DefinitionsGameFrame extends React.Component {
       .then(responses => Promise.all(responses.map(r => r.json())))
       .then(results => {
         console.log("BASIC RESULTS")
-        
+
         random_words = results.map((res) => (res.word));
         random_words = random_words.filter(word => (word != undefined) && (word.length > 6));
         console.log(random_words)
-        //REMOVE
-        
-      }).then(()=>{
-      
-    
-    Promise.all(this.getRequestsForDefinition(random_words))
-      .then(responses => {
-        return responses;
+      }).then(() => {
+        Promise.all(this.getRequestsForDefinition(random_words))
+          .then(responses => {
+            return responses;
+          })
+          .then(responses => Promise.all(responses.map(r => r.json())))
+          .then(results => {
+            results = results.filter(res => !("success" in res));
+            words_definitions = results.map((res) => ({ "word": res.word, "definition": res.definitions }));
+            words_definitions = words_definitions.filter(word => word != undefined);
+            console.log("DEFS RESPONSES: ")
+            console.log(results)
+
+            var word;
+            console.log("WORD_DEFS")
+            console.log(words_definitions)
+            for (word of words_definitions) {
+              console.log(word);
+
+              console.log(word)
+              if ((word["definition"]) && (word["definition"].length > 0)) {
+                correctWord = word["word"]
+                correct_word_def = word["definition"][0]["definition"]
+
+              }
+            }
+
+          }).then(() => {
+            if (correct_word_def) {
+              this.setState((state) => ({
+                definition: correct_word_def,
+                words: words_definitions.map((res) => ({ key: res.word + correctWord, word: res.word, correct: res.word == correctWord, color: "primary" })),
+              }))
+            }
+            else {
+              this.setState((state) => ({
+                definition: "Bad API response, press NEXT again",
+              }))
+            }
+          })
       })
-      .then(responses => Promise.all(responses.map(r => r.json())))
-      .then(results => {
-       results = results.filter(res => !("success" in res));
-       words_definitions = results.map((res) => ({ "word": res.word, "definition": res.definitions }));
-       words_definitions =  words_definitions.filter(word => word != undefined);
-       console.log("DEFS RESPONSES: ")
-       console.log(results)
-       
-       var word;
-       console.log("WORD_DEFS")
-       console.log(words_definitions)
-       for(word of words_definitions){
-         console.log(word);
 
-         console.log(word)
-         if ((word["definition"]) && (word["definition"].length > 0)){           
-           correctWord = word["word"]
-           correct_word_def = word["definition"][0]["definition"]
-           
-         }
-
-
-       }
-      
-           
-
-      }).then(()=>{
-        if(correct_word_def){    
-        this.setState((state) => ({
-          definition: correct_word_def,
-          words: words_definitions.map((res) => ({key: res.word + correctWord,  word: res.word, correct: res.word == correctWord, color: "primary" })),
-        }))
-        
-      }
-      else{
-        this.setState((state) => ({
-          definition: "Bad API response, press NEXT again",          
-        }))
-      }
-      })
-    })
+  }
   
-
-
-  
-}
-
-  resetWords() {
-    for (let i = 0; i < this.state.numOptions; i++) {
-      fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
-        "method": "GET",
-        "headers": {
-          "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
-          "x-rapidapi-key": "e35230f3b8msh39f53e53d676724p1619c3jsn99097ecfe42a"
-        }
-      })
-        .then(res => res.json())
-        .then(
-          (result) => {
-            console.log(result);
-            this.setState((state) => ({
-              words: state.words.concat([{ word: result.word, correct: false, color: "primary" }]),
-            }))
-          },
-          (error) => {
-            this.setState({
-              definition: error,
-              words: []
-            });
-          }
-        )
-    }
-  }
-
-  getUpdatedWords() {
-    return Promise.all([this.resetWords()])
-  }
-
-  resetField(e) {
-    e.preventDefault();
-
-    this.setState((state) => ({
-      words: [],
-    }))
-
-
-    this.getUpdatedWords().then(() => {
-
-      let correctWordInd = Math.floor(Math.random() * this.state.numOptions);
-      let correctWord = this.state.words[0].word;
-
-      fetch("https://wordsapiv1.p.rapidapi.com/words/" + correctWord + "/definitions", {
-        "method": "GET",
-        "headers": {
-          "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
-          "x-rapidapi-key": "e35230f3b8msh39f53e53d676724p1619c3jsn99097ecfe42a"
-        }
-      })
-        .then(res => res.json())
-        .then(
-          (result) => {
-            console.log(result);
-            this.setState((state) => ({
-              words: state.words.map((word) => ({ word: word.word, correct: correctWord == word.word, color: word.color })),
-              definition: result["definitions"]["definition"]
-
-            }))
-          },
-          (error) => {
-            this.setState({
-              definition: error,
-              words: []
-            });
-          }
-        )
-    })
-
-
-
-  }
 
   render() {
     return (
