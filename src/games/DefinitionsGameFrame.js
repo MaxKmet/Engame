@@ -18,7 +18,7 @@ export default class DefinitionsGameFrame extends React.Component {
       words: [{ word: "Word1", correct: false, color: "primary" }, { word: "Word2", correct: true, color: "primary" },
       { word: "Word3", correct: false, color: "primary" }, { word: "Word4", correct: false, color: "primary" }],
       classes: classes,
-      points: 10,
+      points: 0,
     };
 
   }
@@ -64,7 +64,7 @@ export default class DefinitionsGameFrame extends React.Component {
 
     let requests = [];
 
-    for(let i=0; i < this.state.numOptions; i++){
+    for (let i = 0; i < this.state.numOptions; i++) {
       requests.push(fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
         "method": "GET",
         "headers": {
@@ -73,7 +73,7 @@ export default class DefinitionsGameFrame extends React.Component {
         }
       }))
     }
-    
+
 
     var random_words = [];
 
@@ -86,7 +86,7 @@ export default class DefinitionsGameFrame extends React.Component {
         console.log("BASIC RESULTS")
 
         random_words = results.map((res) => (res.word));
-        random_words = random_words.filter(word => (word != undefined) && (word.length > 6));
+        random_words = random_words.filter(word => (word != undefined) && (word.length > 4));
         console.log(random_words)
       }).then(() => {
         Promise.all(this.getRequestsForDefinition(random_words))
@@ -131,7 +131,7 @@ export default class DefinitionsGameFrame extends React.Component {
       })
 
   }
-  
+
 
   render() {
     return (
