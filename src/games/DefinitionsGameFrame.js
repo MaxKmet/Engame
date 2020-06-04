@@ -9,12 +9,12 @@ import Typography from '@material-ui/core/Typography';
 
 export default class DefinitionsGameFrame extends React.Component  {
 
-  constructor({definition, words, classes}) {
+  constructor({classes}) {
     super();
 
     this.state = {
-      definition: definition,
-      words: words,
+      definition: "A long definition of a difficult term in English",
+      words: [["Word1", false],["Word2", true], ["Word3", false], ["Word4", false]],
       classes: classes,
       points: 10,
     };

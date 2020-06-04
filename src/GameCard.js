@@ -25,7 +25,7 @@ const GameCard = ({ classes, gameCard }) => (
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="large" color="primary">
+      <Button href={gameCard.link} size="large" color="primary">
         Play
       </Button>      
     </CardActions>

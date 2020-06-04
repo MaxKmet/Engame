@@ -1,20 +1,21 @@
 import React from 'react';
-
+import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
+import ReactAudioPlayer from 'react-audio-player';
 
 
-export default class SynonymsGameFrame extends React.Component  {
+export default class AudioGameFrame extends React.Component  {
 
-  constructor({mainWord, otherWords,classes}) {
+  constructor({classes}) {
     super();
 
     this.state = {
-      mainWord: mainWord,
-      otherWords: otherWords,
+      audio: "Sample Audio",
+      correctWord: "Main Word",
       classes: classes,
       points: 10,
     };
@@ -28,22 +29,25 @@ export default class SynonymsGameFrame extends React.Component  {
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h4">
-              Find synonym for:
+              Type in the word you hear
             </Typography>
           </Grid>
           <Grid item>
           </Grid>
-        </Grid>
-        <Typography gutterBottom variant="h6">
-              {this.state.mainWord}
-        </Typography>
+        </Grid>        
+        <ReactAudioPlayer
+          src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+          autoPlay
+          controls
+        />
       </div>
-      <Divider variant="middle" />
+      <Divider variant="middle"/>
       <div className={this.state.classes.section2}>
         <div>
-        {this.state.otherWords.map((wordItem) => (
-          <Chip key={wordItem[0]} className={this.state.classes.chip} label= {wordItem[0]} />          
-        ))}          
+        <form className={this.state.classes.root} noValidate autoComplete="off">        
+        <TextField id="outlined-basic" label="Type here" variant="outlined" />
+      </form>
+      <Chip className={this.state.classes.chip} label= "Submit" /> 
         </div>
       </div>
       <div className={this.state.classes.section3}>
